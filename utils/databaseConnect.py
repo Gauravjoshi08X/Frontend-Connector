@@ -8,7 +8,7 @@ class DatabaseInsert():
 		self.password=os.getenv("DBPASS")
 
 	def insertUserData(self, email: str, uname: str, refresh_token: str) -> None:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""INSERT INTO users (email, uname, refresh_token)
 				VALUES (
@@ -19,7 +19,7 @@ class DatabaseInsert():
 
 
 	def insertPRJData(self, project: str, user: str) -> None:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""INSERT INTO project (project_name, user_id)
 				VALUES (
@@ -29,7 +29,7 @@ class DatabaseInsert():
 				conn.commit()
 
 	def insertOpenEventData(self, event_time, email: str) -> None:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""INSERT INTO event (email_id, project_id, event_time, open)
 				VALUES (
@@ -39,7 +39,7 @@ class DatabaseInsert():
 				conn.commit()
 
 	def insertEventData(self, location: str, email: str) -> None:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""UPDATE event
 				set click=%s, location=%s
@@ -48,7 +48,7 @@ class DatabaseInsert():
 				conn.commit()
 
 	def insertEmailData(self, recipient: str, subject: str, sent_at) -> None:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""INSERT INTO email (project_id, recipient_email, subject, sent_at)
 				VALUES (
@@ -64,7 +64,7 @@ class DatabaseFKFetch():
 		self.password=os.getenv("DBPASS")
 
 	def fetchFKData(self,id: str, table: str) -> int:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query=f"""SELECT MAX({id}) FROM {table};"""
 				cur.execute(event_query)
@@ -72,7 +72,7 @@ class DatabaseFKFetch():
 				return result[0]
 
 	def fetchUserFKData(self, uname: str)->int:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""SELECT user_id FROM users where uname=%s;"""
 				cur.execute(event_query, (uname,))
@@ -80,7 +80,7 @@ class DatabaseFKFetch():
 				return result[0]
 
 	def fetchUserEventData(self, email: str)->int:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""SELECT email_id FROM email where recipient_email=%s;"""
 				cur.execute(event_query, (email,))
@@ -94,7 +94,7 @@ class DatabaseFetch():
 		self.password=os.getenv("DBPASS")
 
 	def isUser(self, user: str)-> bool:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				user_query="""
 				select exists(select 1 from users where uname=%s)
@@ -104,7 +104,7 @@ class DatabaseFetch():
 				return result[0]
 
 	def fetchRTData(self,user) -> str:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""SELECT refresh_token from users where uname=%s"""
 				cur.execute(event_query, (user,))
@@ -112,7 +112,7 @@ class DatabaseFetch():
 				return result[0]
 
 	def fetchEmailData(self,user: str) -> str:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur: 
 				event_query="""SELECT email from users where uname=%s"""
 				cur.execute(event_query, (user,))
@@ -120,7 +120,7 @@ class DatabaseFetch():
 				return result[0]
 	
 	def totalEmails(self, user: str) -> int:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				event_query="""
 			select count(*) from email where project_id=(select max(project_id) from project where user_id=(select user_id from users where uname=%s))
@@ -130,7 +130,7 @@ class DatabaseFetch():
 				return result[0]
 
 	def fetchStat(self, user: str):
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				open_query="""
 			select count(distinct(email_id)) from event where open is true and project_id=(select max(project_id) from project where user_id=(select user_id from users where uname=%s))
@@ -145,7 +145,7 @@ class DatabaseFetch():
 				return (open, click)
 
 	def location(self, user: str) -> str:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				location_query="""
 			select max(location) from event where project_id=(select max(project_id) from project where user_id=(select user_id from users where uname=%s))
@@ -155,7 +155,7 @@ class DatabaseFetch():
 				return location[0]
 	
 	def getEmails(self, user: str) -> list:
-		with psycopg2.connect(f"dbname={self.name} user={self.user} password={self.password}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				email_query="""
 			select recipient_email from email where project_id=(select max(project_id) from project where user_id=(select user_id from users where uname=%s))
