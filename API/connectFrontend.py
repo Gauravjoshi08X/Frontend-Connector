@@ -93,7 +93,6 @@ class Config:
                         di().insertEmailData(email, subject, datetime.datetime.now())
             
         return jsonify({"msg": "Emails Sent Successfully!"})
-
-if __name__=="__main__":
-    instance=Config()
-    instance.app.run(debug=True, port=5005)
+app=Config().app
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5005)))
