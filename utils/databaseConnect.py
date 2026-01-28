@@ -99,7 +99,7 @@ class DatabaseFetch():
 		self.port = os.getenv('PGPORT')
 
 	def isUser(self, user: str)-> bool:
-		with psycopg2.connect(f"postgresql://{self.name}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
+		with psycopg2.connect(f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}") as conn:
 			with conn.cursor() as cur:
 				user_query="""
 				select exists(select 1 from users where uname=%s)
