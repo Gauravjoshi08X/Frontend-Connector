@@ -7,8 +7,8 @@ from  email import encoders
 import base64, logging, json, os
 
 class MailTransmit():
-	def __init__(self, serverLink, rt):
-		self.serverLink=serverLink
+	def __init__(self, rt):
+		self.serverLink=os.getenv("SERVER_LINK")
 		self.g_cred=json.loads(os.getenv("g_cred"))
 		self.service=self._gmailAuthenticate(rt)
 

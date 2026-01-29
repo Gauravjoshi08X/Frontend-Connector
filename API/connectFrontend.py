@@ -11,7 +11,6 @@ class Config:
     def __init__(self):
         self.app=Flask(__name__)
         self.app.secret_key=os.getenv("FLASK_SECRET_KEY")
-        self.tunnel_url: str = os.getenv("MAIL_TUNNEL")
         self.app.add_url_rule("/sendmail", view_func=self.sendMail, methods=["POST", "GET"])
         self.app.add_url_rule("/sendname", view_func=self.getName, methods=["POST"])
         self.app.add_url_rule("/getstat", view_func=self.getStat, methods=["POST","GET"])
@@ -50,7 +49,7 @@ class Config:
         
         rt=dc().fetchRTData(formatted_name)
         sendr=dc().fetchEmailData(formatted_name)
-        mail=MailTransmit(self.tunnel_url, rt)
+        mail=MailTransmit(rt)
         files = request.files.getlist('file')
         attachment = {}
         for file in files:
