@@ -149,7 +149,18 @@ class DatabaseFetch():
 		with psycopg2.connect(self.db_url) as conn:
 			with conn.cursor() as cur:
 				email_query="""
-     select recipient_email from email where project_id=(select max(project_id) from project where user_id=(select user_id from users where uname=%s))
+					SELECT DISTINCT e.recipient_email
+					FROM email e
+					INNER JOIN event ev ON ev.email_id = e.email_id
+					WHERE ev.click = true and ev.project_id=(
+						SELECT MAX(project_id)
+						FROM project
+						WHERE user_id = (
+							SELECT user_id
+							FROM users
+							WHERE uname = 'Gaurav Joshi'
+    ))
+
 				"""
 				cur.execute(email_query, (user,))
 				emails=cur.fetchall()
